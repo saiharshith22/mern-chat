@@ -13,22 +13,78 @@ import { useState } from "react";
 import { CameraAlt } from "@mui/icons-material";
 import { VisuallyHiddenInput } from "../components/styles/StyledComponents";
 import useInputValidator from "../hooks/useInputValidator";
-import { nameValidator } from "../utils/validators";
+import { nameValidator, passwordValidator } from "../utils/validators";
+import useFileUpload from "../hooks/useFileUpload";
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
 
-  const toggleLogin = () => {
-    setIsLogin((prev) => !prev);
-  };
-
-  const {
+  let {
     value: username,
     hasError: usernameHasError,
     errorMessage: usernameErrorMessage,
     valueChangeHandler: usernameChangeHandler,
-    inputBlurHandler: usernameBlurHandler,
+    reset: usernameReset,
   } = useInputValidator([nameValidator], "Username");
+
+  const {
+    value: password,
+    hasError: passwordHasError,
+    errorMessage: passwordErrorMessage,
+    valueChangeHandler: passwordChangeHandler,
+    reset: passwordReset,
+  } = useInputValidator([passwordValidator], "Password");
+
+  const {
+    value: nameSignup,
+    hasError: nameSignupHasError,
+    errorMessage: nameSignupErrorMessage,
+    valueChangeHandler: nameSignupChangeHandler,
+    reset: nameSignupReset,
+  } = useInputValidator([nameValidator], "Name");
+
+  const {
+    value: bio,
+    hasError: bioHasError,
+    errorMessage: bioErrorMessage,
+    valueChangeHandler: bioChangeHandler,
+    reset: bioReset,
+  } = useInputValidator([], "Bio");
+
+  const {
+    previews,
+    // files,
+    error: fileError,
+    changeHandler,
+  } = useFileUpload({
+    multiple: false,
+    maxSize: 1 * 1024 * 1024,
+  });
+
+  const handleLogin = () => {
+    if (!username || !password || usernameHasError || passwordHasError) {
+      console.log("not valid");
+    }
+  };
+
+  const resetFields = () => {
+    usernameReset();
+    passwordReset();
+    nameSignupReset();
+    bioReset();
+  };
+
+  const toggleLogin = (e) => {
+    e.preventDefault();
+    resetFields();
+
+    setIsLogin((prev) => !prev);
+  };
+
+  const handleSignup = (e) => {
+    e.preventDefault();
+    resetFields();
+  };
 
   return (
     <Container
@@ -66,10 +122,9 @@ const Login = () => {
                 variant="outlined"
                 value={username}
                 onChange={usernameChangeHandler}
-                onBlur={usernameBlurHandler}
               />
               {usernameHasError && (
-                <Typography variant="caption" color="error">
+                <Typography variant="caption" color="error" id="usernameError">
                   {usernameErrorMessage}
                 </Typography>
               )}
@@ -79,15 +134,24 @@ const Login = () => {
                 fullWidth
                 id="password"
                 label="Password"
-                type="password"
+                type={"password"}
                 sx={{ mt: "1rem" }}
                 variant="outlined"
+                value={password}
+                onChange={passwordChangeHandler}
               />
+              {passwordHasError && (
+                <Typography variant="caption" color="error">
+                  {passwordErrorMessage}
+                </Typography>
+              )}
               <Button
                 sx={{ mt: "1rem", textTransform: "none" }}
                 variant="contained"
                 type="submit"
                 fullWidth
+                name="loginBtn"
+                onSubmit={handleLogin}
               >
                 Log in
               </Button>
@@ -104,7 +168,10 @@ const Login = () => {
           </>
         ) : (
           <>
-            <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+            <Typography
+              variant="h5"
+              sx={{ fontWeight: "bold", marginBottom: "1rem" }}
+            >
               Sign Up
             </Typography>
             <form>
@@ -115,7 +182,9 @@ const Login = () => {
                     height: "10rem",
                     objectFit: "contain",
                   }}
+                  src={previews[0]}
                 />
+
                 <IconButton
                   sx={{
                     position: "absolute",
@@ -131,10 +200,23 @@ const Login = () => {
                 >
                   <>
                     <CameraAlt />
-                    <VisuallyHiddenInput type="file" />
+                    <VisuallyHiddenInput type="file" onChange={changeHandler} />
                   </>
                 </IconButton>
               </Stack>
+              {fileError && (
+                <Typography
+                  variant="caption"
+                  color="error"
+                  sx={{
+                    mt: "1rem",
+                    display: "flex",
+                    justifyContent: "center",
+                  }}
+                >
+                  {fileError}
+                </Typography>
+              )}
               <TextField
                 required
                 size="small"
@@ -143,7 +225,14 @@ const Login = () => {
                 label="Name"
                 sx={{ mt: "1rem" }}
                 variant="outlined"
+                value={nameSignup}
+                onChange={nameSignupChangeHandler}
               />
+              {nameSignupHasError && (
+                <Typography variant="caption" color="error">
+                  {nameSignupErrorMessage}
+                </Typography>
+              )}
               <TextField
                 required
                 size="small"
@@ -152,7 +241,14 @@ const Login = () => {
                 label="Username"
                 sx={{ mt: "1rem" }}
                 variant="outlined"
+                value={username}
+                onChange={usernameChangeHandler}
               />
+              {usernameHasError && (
+                <Typography variant="caption" color="error">
+                  {usernameErrorMessage}
+                </Typography>
+              )}
               <TextField
                 required
                 size="small"
@@ -161,7 +257,14 @@ const Login = () => {
                 label="Bio"
                 sx={{ mt: "1rem" }}
                 variant="outlined"
+                value={bio}
+                onChange={bioChangeHandler}
               />
+              {bioHasError && (
+                <Typography variant="caption" color="error">
+                  {bioErrorMessage}
+                </Typography>
+              )}
               <TextField
                 required
                 size="small"
@@ -171,12 +274,20 @@ const Login = () => {
                 type="password"
                 sx={{ mt: "1rem" }}
                 variant="outlined"
+                value={password}
+                onChange={passwordChangeHandler}
               />
+              {passwordHasError && (
+                <Typography variant="caption" color="error">
+                  {passwordErrorMessage}
+                </Typography>
+              )}
               <Button
                 sx={{ mt: "1rem", textTransform: "none" }}
                 variant="contained"
                 type="submit"
                 fullWidth
+                onSubmit={handleSignup}
               >
                 Sign up
               </Button>

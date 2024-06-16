@@ -2,48 +2,41 @@ import { useState } from "react";
 
 const useInputValidator = (validators, field) => {
   const [enteredValue, setEnteredValue] = useState("");
-  const [isTouched, setIsTouched] = useState(false);
+  const [isValid, setIsValid] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  // Determine if the field is empty and should show the 'empty' error message
-  const isEmpty = enteredValue.trim() === "";
-  const emptyError = isEmpty ? `* ${field} must not be empty` : "";
+  let validationResults = null;
 
-  // Run all validators if the field is not empty
-  const validationResults = isEmpty
-    ? [true]
-    : validators.map((validator) => validator(enteredValue));
-
-  const firstErrorMessage = validationResults.find((result) => result !== true);
-
-  // Use the empty error message if present, otherwise use the first validation error
-  const errorMessage = emptyError
-    ? emptyError
-    : firstErrorMessage
-    ? `* ${field} ${firstErrorMessage}`
-    : "";
-
-  const isValid = !errorMessage;
-
-  const valueChangeHandler = (event) => {
-    setEnteredValue(event.target.value);
-  };
-
-  const inputBlurHandler = () => {
-    setIsTouched(true);
-  };
+  let firstErrorMessage = null;
 
   const reset = () => {
     setEnteredValue("");
-    setIsTouched(false);
+    setErrorMessage("");
+  };
+
+  const valueChangeHandler = (event) => {
+    setEnteredValue(event.target.value);
+    const isEmpty = event.target.value.trim() === "";
+    const emptyError = isEmpty ? `* ${field} must not be empty` : "";
+    validationResults = isEmpty
+      ? [true]
+      : validators.map((validator) => validator(event.target.value));
+    firstErrorMessage = validationResults.find((result) => result !== true);
+    let errMssg = emptyError
+      ? emptyError
+      : firstErrorMessage
+      ? `* ${field} ${firstErrorMessage}`
+      : "";
+    setErrorMessage(errMssg);
+    setIsValid(!errMssg);
   };
 
   return {
     value: enteredValue,
     isValid,
-    hasError: isTouched && !isValid,
+    hasError: !isValid,
     errorMessage,
     valueChangeHandler,
-    inputBlurHandler,
     reset,
   };
 };
