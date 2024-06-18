@@ -1,5 +1,6 @@
 import { Avatar, AvatarGroup, Box, Stack } from "@mui/material";
 import PropTypes from "prop-types";
+import { transformImage } from "../../lib/features";
 
 const AvatarCard = ({ avatar = [], max = 4 }) => {
   return (
@@ -9,7 +10,7 @@ const AvatarCard = ({ avatar = [], max = 4 }) => {
           {avatar.map((item, index) => (
             <Avatar
               key={Math.random() * 100}
-              src={item}
+              src={transformImage(item)}
               alt={`Avatar ${index}`}
               sx={{
                 width: "3rem",
@@ -30,7 +31,7 @@ const AvatarCard = ({ avatar = [], max = 4 }) => {
 
 AvatarCard.propTypes = {
   avatar: PropTypes.array,
-  max: PropTypes.number,
-};
+  max: PropTypes.number
+}
 
 export default AvatarCard;
