@@ -27,3 +27,19 @@ export const sampleUsers = [
     _id: "2",
   },
 ];
+export const sampleNotifications = [
+  {
+    sender: {
+      avatar: ["https://www.w3schools.com/w3images/avatar2.png"],
+      name: "Harry Potter",
+    },
+    _id: "1",
+  },
+  {
+    sender: {
+      avatar: ["https://www.w3schools.com/howto/img_avatar2.png"],
+      name: "Ron",
+    },
+    _id: "2",
+  },
+];

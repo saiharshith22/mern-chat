@@ -1,7 +1,12 @@
+import { Stack } from "@mui/material";
 import AppLayout from "../components/layout/AppLayout";
 
 const Chat = () => {
-  return <div>Chat</div>;
+  return (
+    <>
+      <Stack></Stack>
+    </>
+  );
 };
 
 export default AppLayout()(Chat);

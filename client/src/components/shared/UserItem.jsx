@@ -1,9 +1,9 @@
 import PropTypes from "prop-types";
 import { Avatar, IconButton, ListItem, Stack, Typography } from "@mui/material";
 import { memo } from "react";
-import { Add as AddIcon } from "@mui/icons-material";
+import { Add as AddIcon, Remove as RemoveIcon } from "@mui/icons-material";
 
-const UserItem = ({ user, handler, handlerLoading }) => {
+const UserItem = ({ user, handler, handlerLoading, isAdded = false }) => {
   const { name, _id, avatar } = user;
   return (
     <ListItem>
@@ -30,14 +30,14 @@ const UserItem = ({ user, handler, handlerLoading }) => {
         <IconButton
           size="small"
           sx={{
-            bgcolor: "primary.main",
+            bgcolor: isAdded ? "error.main" : "primary.main",
             color: "white",
-            "&:hover": { bgcolor: "primary.dark" },
+            "&:hover": { bgcolor: isAdded ? "error.dark" : "primary.dark" },
           }}
           onClick={() => handler(_id)}
           disabled={handlerLoading}
         >
-          <AddIcon />
+          {isAdded ? <RemoveIcon /> : <AddIcon />}
         </IconButton>
       </Stack>
     </ListItem>
@@ -47,6 +47,7 @@ const UserItem = ({ user, handler, handlerLoading }) => {
 UserItem.propTypes = {
   handler: PropTypes.func,
   handlerLoading: PropTypes.bool,
+  isAdded: PropTypes.any,
   user: PropTypes.shape({
     _id: PropTypes.any,
     avatar: PropTypes.any,
